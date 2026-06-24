@@ -10,7 +10,7 @@ class Document:
 import os
 docs=[]
 for i,j in enumerate(os.listdir("data")):
-    with open(f'data\{j}') as f:
+    with open(os.path.join("data",j),encoding='utf-8') as f:
         content=f.read()
     docs.append(Document(i+1,j,content))
 
