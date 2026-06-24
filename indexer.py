@@ -1,6 +1,7 @@
 
 import os
 from model import Document
+from db import get_connection
 
 class Indexer:
 
@@ -8,7 +9,13 @@ class Indexer:
         self.documents=[]
 
     def add_document(self,document):
+        conn=get_connection()
         self.documents.append(document)
+        cur=conn.cursor()
+        cur.execute("insert into documents(title,content) values(%s,%s)",(document.title,document.text))
+        conn.commit()
+        cur.close()
+        conn.close()
         print("\nAdded in ur documents!!!")
 
     def search(self,query):
