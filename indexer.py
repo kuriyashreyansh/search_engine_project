@@ -12,7 +12,9 @@ class Indexer:
         conn=get_connection()
         self.documents.append(document)
         cur=conn.cursor()
-        cur.execute("insert into documents(title,content) values(%s,%s)",(document.title,document.text))
+        cur.execute("insert into documents(title,content) values(%s,%s) returning Id",(document.title,document.text))
+        new_id=cur.fetchone()[0]
+        document.Id=new_id
         conn.commit()
         cur.close()
         conn.close()
