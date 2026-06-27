@@ -27,21 +27,23 @@ class Indexer:
     def get_term_id(self,word):
         conn=get_connection()
         cur=conn.cursor()
-        #as it is single word earlier hence i am not adding tuple format
         cur.execute("SELECT term_id FROM terms WHERE word = %s",(word,))
         match=cur.fetchone()
         if match is None:
-            print("Query word not found")
-            conn.commit()
             cur.close()
             conn.close()
-            return None
+            return "Query word not found"
         else:
-            cur.execute("select (doc_id,term_frequency) from postings where word=%s",(match))
+            cur.execute("select doc_id,term_frequency from postings where term_id=%s",(match[0],))
+            fetched_data=cur.fetchall()
             conn.commit()
             cur.close()
             conn.close()
-            return match
+            return fetched_data
+        
+indexer=Indexer()
+print(indexer.get_term_id("learning"))
+print(indexer.get_term_id("xyzabc"))
 
 
 
