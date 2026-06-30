@@ -78,6 +78,7 @@ class Indexer:
         for i,j in sorted_summrised_data:
             print(f"{self.get_document_title(i)} file has {query} {j} times in it")
         
+#TF-IDF value is counted by no. of sentences and word that is repeated in sentences
 
 
 indexer=Indexer()
