@@ -60,23 +60,10 @@ class Indexer:
         cur.close()
         conn.close()
         return document_title
-    
-# MULTIPLE WORD SEARCH handling
 
 
-    def new_search(self,query):
-        query_tokens=tokenize(query)
-        summurised_data={}
-        for i in query_tokens.keys():
-            term_id_frequency=self.get_term_id(i)
-            if term_id_frequency is None:
-                    pass
-            else:
-                for j,k in term_id_frequency:
-                    summurised_data[j]=summurised_data.get(j,0)+k
-        sorted_summrised_data=sorted(summurised_data.items(),key=lambda i : i[1],reverse=True)
-        for i,j in sorted_summrised_data:
-            print(f"{self.get_document_title(i)} file has {query} {j} times in it")
+
+
         
 #TF-IDF value is counted by no. of sentences and word that is repeated in sentences
     def get_document_count(self,doc_id):
@@ -87,8 +74,29 @@ class Indexer:
         cur.close()
         conn.close()
         return frequency
+    
+
+
+# MULTIPLE WORD SEARCH handling
+#ADDING NEW PART OF FINDING TF IN NEW_SEARCH WHERE K(FREQ) IS DIRECTLY DIVIDED BY TOTAL WORDS
+
+    def new_search(self,query):
+        query_tokens=tokenize(query)
+        summurised_data={}
+        for i in query_tokens.keys():
+            term_id_frequency=self.get_term_id(i)
+            if term_id_frequency is None:
+                    pass
+            else:
+                for j,k in term_id_frequency:
+                    summurised_data[j]=summurised_data.get(j,0)+(k/self.get_document_count(j))
+        sorted_summrised_data=sorted(summurised_data.items(),key=lambda i : i[1],reverse=True)
+        for i,j in sorted_summrised_data:
+            print(f"{self.get_document_title(i)} file has {query} Relevance score : {j}")
+
+        
+
 
 
 indexer=Indexer()
-indexer.new_search("machine xyzabc")
-print(indexer.get_document_count(2))
+indexer.new_search("machine learning")
