@@ -118,7 +118,3 @@ class Indexer:
         cur.close()
         conn.close()
         return doc_freq
-
-
-indexer=Indexer()
-indexer.new_search("machine learning")
