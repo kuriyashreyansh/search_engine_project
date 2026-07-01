@@ -79,7 +79,16 @@ class Indexer:
             print(f"{self.get_document_title(i)} file has {query} {j} times in it")
         
 #TF-IDF value is counted by no. of sentences and word that is repeated in sentences
+    def get_document_count(self,doc_id):
+        conn=get_connection()
+        cur=conn.cursor()
+        cur.execute("Select sum(term_frequency) from postings where doc_id=%s",(doc_id,))
+        frequency=cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return frequency
 
 
 indexer=Indexer()
 indexer.new_search("machine xyzabc")
+print(indexer.get_document_count(2))
