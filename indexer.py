@@ -1,5 +1,6 @@
 from db import get_connection
 from tokenizer import tokenize
+import math
 
 class Indexer:
 
@@ -49,7 +50,7 @@ class Indexer:
             conn.commit()
             cur.close()
             conn.close()
-            return fetched_data
+            return (match[0],fetched_data)
         
 
     def get_document_title(self,doc_id):
@@ -74,23 +75,29 @@ class Indexer:
         return frequency
     
 
+    def get_idf(self,term_id):
+        return math.log(self.get_total_documents()/self.get_document_frequency(term_id))
+    
+
 
 # MULTIPLE WORD SEARCH handling
-#ADDING NEW PART OF FINDING TF IN NEW_SEARCH WHERE K(FREQ) IS DIRECTLY DIVIDED BY TOTAL WORDS
+# ADDING NEW PART OF FINDING TF IN NEW_SEARCH WHERE K(FREQ) IS DIRECTLY DIVIDED BY TOTAL WORDS
 
     def new_search(self,query):
         query_tokens=tokenize(query)
         summurised_data={}
         for i in query_tokens.keys():
-            term_id_frequency=self.get_term_id(i)
-            if term_id_frequency is None:
+            result=self.get_term_id(i)
+            if result is None:
                     pass
             else:
+                term_id,term_id_frequency=result
                 for j,k in term_id_frequency:
-                    summurised_data[j]=summurised_data.get(j,0)+(k/self.get_document_count(j))
+                    summurised_data[j]=summurised_data.get(j,0)+(k/self.get_document_count(j))*self.get_idf(term_id)
         sorted_summrised_data=sorted(summurised_data.items(),key=lambda i : i[1],reverse=True)
         for i,j in sorted_summrised_data:
             print(f"{self.get_document_title(i)} file has {query} Relevance score : {j}")
+        
 
         
     def get_total_documents(self):
@@ -115,4 +122,3 @@ class Indexer:
 
 indexer=Indexer()
 indexer.new_search("machine learning")
-print(indexer.get_document_frequency(19))
