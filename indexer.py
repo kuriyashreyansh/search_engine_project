@@ -60,9 +60,7 @@ class Indexer:
         cur.close()
         conn.close()
         return document_title
-
-
-
+    
 
         
 #TF-IDF value is counted by no. of sentences and word that is repeated in sentences
@@ -95,8 +93,26 @@ class Indexer:
             print(f"{self.get_document_title(i)} file has {query} Relevance score : {j}")
 
         
+    def get_total_documents(self):
+        conn=get_connection()
+        cur=conn.cursor()
+        cur.execute("select count(id) from documents")
+        total_documents=cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return total_documents
+    
 
+    def get_document_frequency(self,term_id):
+        conn=get_connection()
+        cur=conn.cursor()
+        cur.execute("select count(*) from postings where term_id = %s",(term_id,))
+        doc_freq=cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return doc_freq
 
 
 indexer=Indexer()
 indexer.new_search("machine learning")
+print(indexer.get_document_frequency(19))
