@@ -20,20 +20,6 @@ class Indexer:
         conn.close()
         print("\nAdded in ur documents!!!")
 
-    # Single Search query
-
-    # def search(self,query):
-    #     query_token=tokenize(query)
-    #     search_result=self.get_term_id(list(query_token.keys())[0])
-    #     if search_result is None:
-    #         print("No results found")
-    #         return None
-    #     else:
-    #         sorted_items = sorted(search_result, key=lambda item: item[1], reverse=True)
-    #         for doc_id,frequency in sorted_items:
-    #             title=self.get_document_title(doc_id)
-    #             print(f"{query} word is found in {title} {frequency} times")
-        # return sorted_result
         
     def get_term_id(self,word):
         conn=get_connection()
@@ -63,8 +49,6 @@ class Indexer:
         return document_title
     
 
-        
-#TF-IDF value is counted by no. of sentences and word that is repeated in sentences
     def get_document_count(self,doc_id):
         conn=get_connection()
         cur=conn.cursor()
@@ -75,13 +59,31 @@ class Indexer:
         return frequency
     
 
+    def get_total_documents(self):
+        conn=get_connection()
+        cur=conn.cursor()
+        cur.execute("select count(id) from documents")
+        total_documents=cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return total_documents
+    
+
+    def get_document_frequency(self,term_id):
+        conn=get_connection()
+        cur=conn.cursor()
+        cur.execute("select count(*) from postings where term_id = %s",(term_id,))
+        doc_freq=cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return doc_freq
+    
+
     def get_idf(self,term_id):
         return math.log(self.get_total_documents()/self.get_document_frequency(term_id))
     
 
-
-# MULTIPLE WORD SEARCH handling
-# ADDING NEW PART OF FINDING TF IN NEW_SEARCH WHERE K(FREQ) IS DIRECTLY DIVIDED BY TOTAL WORDS
+# Multi-word search with TF-IDF ranking
 
     def new_search(self,query):
         query_tokens=tokenize(query)
@@ -100,14 +102,7 @@ class Indexer:
         
 
         
-    def get_total_documents(self):
-        conn=get_connection()
-        cur=conn.cursor()
-        cur.execute("select count(id) from documents")
-        total_documents=cur.fetchone()[0]
-        cur.close()
-        conn.close()
-        return total_documents
+    
     
 
     def get_document_frequency(self,term_id):
