@@ -8,9 +8,8 @@ from trie import Trie
 indexer=Indexer()
 trie=Trie()
 
-
-doc=indexer.get_total_documents()
-if doc==0:
+doc = indexer.get_total_documents()
+if doc == 0:
     import os
     docs=[]
     for i,j in enumerate(os.listdir("data")):
@@ -20,7 +19,7 @@ if doc==0:
     for i in docs:
         indexer.add_document(i)
         tokens=tokenize(i.text)
-        save_posting(i,tokens)
+        save_posting(i,tokens,indexer.conn)
 
 for i in indexer.get_all_terms():
      trie.insert(i)

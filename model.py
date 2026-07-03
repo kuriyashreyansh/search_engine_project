@@ -13,6 +13,3 @@ for i,j in enumerate(os.listdir("data")):
     with open(os.path.join("data",j),encoding='utf-8') as f:
         content=f.read()
     docs.append(Document(i+1,j,content))
-
-for d in docs:
-    print(d)
