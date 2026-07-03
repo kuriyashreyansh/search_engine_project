@@ -85,3 +85,14 @@ class Indexer:
         sorted_summrised_data=sorted(summurised_data.items(),key=lambda i : i[1],reverse=True)
         for i,j in sorted_summrised_data:
             print(f"{self.get_document_title(i)} file has {query} Relevance score : {j}")
+
+
+    def get_all_terms(self):
+        cur=self.conn.cursor()
+        cur.execute("select word from terms")
+        words=cur.fetchall()
+        cur.close()
+        words_list=[]
+        for i in words:
+            words_list.append(i[0])
+        return words_list

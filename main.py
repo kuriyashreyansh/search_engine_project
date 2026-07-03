@@ -2,7 +2,12 @@ from indexer import Indexer
 from model import Document
 from tokenizer import tokenize
 from posting import save_posting
+from trie import Trie
+
+
 indexer=Indexer()
+trie=Trie()
+
 
 doc=indexer.get_total_documents()
 if doc==0:
@@ -16,9 +21,13 @@ if doc==0:
         indexer.add_document(i)
         tokens=tokenize(i.text)
         save_posting(i,tokens)
+
+for i in indexer.get_all_terms():
+     trie.insert(i)
+
 while True:
         search=input("Search: ")
-
+    
         if search in ["exit","quit"]:
             print("Goodbye👋")
             break
@@ -27,4 +36,5 @@ while True:
             continue
 
         else:
+            print(trie.search_prefix(search))
             indexer.new_search(search)

@@ -33,14 +33,3 @@ class Trie:
             self._collect(node.children[i],prefix+i,results)
         
         return results
-    
-
-trie = Trie()
-trie.insert("neural")
-trie.insert("network")
-trie.insert("neuroscience")
-trie.insert("machine")
-
-print(trie.search_prefix("neur"))  # should give ["neural", "neuroscience"]
-print(trie.search_prefix("net"))   # should give ["network"]  
-print(trie.search_prefix("xyz"))   # should give []
